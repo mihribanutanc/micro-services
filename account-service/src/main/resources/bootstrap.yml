@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: account-service
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    config:
+      profile: native
+      uri: http://localhost:8888

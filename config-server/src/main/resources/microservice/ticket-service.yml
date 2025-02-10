@@ -1,0 +1,35 @@
+server:
+  port: 9051
+
+
+spring:
+  application:
+    name: ticket-service
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cloud
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    initialize: false
+    hikari:
+      maximum-pool-size: 10
+    jpa:
+      hibernate:
+        ddl-auto: create
+      show-sql: true
+      enabled: true
+      autoconfigure:
+        exclude: org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizationAutoConfiguration
+      properties:
+        hibernate:
+          format_sql: true
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9058/eureka/
