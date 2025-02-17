@@ -1,0 +1,22 @@
+server:
+  port: 9052
+
+
+spring:
+  application:
+    name: notification-service
+  rabbitmq:
+    username: reversetech
+    password: reversetech
+
+  cloud:
+    function:
+      definition: onNotification
+    stream:
+      bindings:
+        onNotification-in-0:
+          destination: msqueue
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9058/eureka/

@@ -8,7 +8,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    exclude: org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration
 
   datasource:
     url: jdbc:postgresql://localhost:5432/cloud
@@ -18,17 +18,29 @@ spring:
     initialize: false
     hikari:
       maximum-pool-size: 10
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    enabled: true
+    autoconfigure:
+      exclude: org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizationAutoConfiguration
+    properties:
       hibernate:
-        ddl-auto: create
-      show-sql: true
-      enabled: true
-      autoconfigure:
-        exclude: org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizationAutoConfiguration
-      properties:
-        hibernate:
-          format_sql: true
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  rabbitmq:
+    username: reversetech
+    password: reversetech
+
+  cloud:
+    function:
+      definition: sendToQueue
+    stream:
+      bindings:
+        sendToQueue-in-0:
+          destination: msqueue
 eureka:
   client:
     service-url:

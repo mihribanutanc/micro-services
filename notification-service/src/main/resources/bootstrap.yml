@@ -1,9 +1,12 @@
 spring:
   application:
-    name: ticket-service
+    name: notification-service
+
   cloud:
     compatibility-verifier:
       enabled: false
     config:
       profile: native
       uri: http://localhost:8888
+
+

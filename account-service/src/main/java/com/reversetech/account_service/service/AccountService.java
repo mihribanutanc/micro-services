@@ -10,11 +10,15 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+
 @Service
 public class AccountService {
 
     private final AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public Account get(UUID id) {
         return accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
