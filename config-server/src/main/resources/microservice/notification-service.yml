@@ -5,6 +5,11 @@ server:
 spring:
   application:
     name: notification-service
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration
+
   rabbitmq:
     username: reversetech
     password: reversetech
@@ -20,3 +25,8 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:9058/eureka/
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # Tüm istekleri Zipkin'e logla (Production'da 0.1 gibi olabilir)

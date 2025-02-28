@@ -5,3 +5,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:9058/eureka/
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # Tüm istekleri Zipkin'e logla (Production'da 0.1 gibi olabilir)
+  otlp:
+    tracing:
+      endpoint: http://localhost:9411

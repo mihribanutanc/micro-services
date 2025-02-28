@@ -8,7 +8,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
   autoconfigure:
-    exclude: org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration
+    exclude:
+    - org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration
+    - org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration
 
   datasource:
     url: jdbc:postgresql://localhost:5432/cloud
@@ -20,7 +22,7 @@ spring:
       maximum-pool-size: 10
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     enabled: true
     autoconfigure:
@@ -45,3 +47,8 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:9058/eureka/
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # Tüm istekleri Zipkin'e logla (Production'da 0.1 gibi olabilir)
