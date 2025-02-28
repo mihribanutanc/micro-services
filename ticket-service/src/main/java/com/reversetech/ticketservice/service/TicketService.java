@@ -6,7 +6,9 @@ import com.reversetech.dto.AccountDto;
 import com.reversetech.ticketservice.dto.TicketDto;
 import com.reversetech.ticketservice.mapper.TicketMapper;
 import com.reversetech.ticketservice.model.Ticket;
+import com.reversetech.ticketservice.model.es.TicketModel;
 import com.reversetech.ticketservice.repository.TicketRepository;
+import com.reversetech.ticketservice.repository.es.TicketElasticSearchRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -24,31 +26,58 @@ import java.util.UUID;
 @Service
 public class TicketService {
 
-    private  TicketRepository ticketRepository;
-
-    private  TicketMapper ticketMapper;
-
-    private  AccountServiceClient accountClient;
-
-    private TicketNotificationService ticketNotificationService;
-
-    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper, AccountServiceClient accountClient, TicketNotificationService ticketNotificationService) {
+    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper, AccountServiceClient accountClient,
+                         TicketNotificationService ticketNotificationService, TicketElasticSearchRepository elasticSearchRepository) {
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
         this.accountClient = accountClient;
         this.ticketNotificationService = ticketNotificationService;
+        this.elasticSearchRepository = elasticSearchRepository;
     }
+
     public TicketService() {
     }
+
+    @Autowired
+    private  TicketRepository ticketRepository;
+
+    @Autowired
+    private TicketElasticSearchRepository elasticSearchRepository;
+
+    @Autowired
+    private  TicketMapper ticketMapper;
+
+
+    private AccountServiceClient accountClient;
+
+    @Autowired
+    private  TicketNotificationService ticketNotificationService;
+
+
+
+
     public TicketDto save(TicketDto ticketDto){
 
-        ResponseEntity<AccountDto> accountRes =  accountClient.get(UUID.fromString(ticketDto.getAssigned()));
         Ticket ticket = ticketMapper.toEntity(ticketDto);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        TicketModel model = new TicketModel();
+
+                model.setDescription(ticket.getDescription());
+                model.setNotes(ticket.getNotes());
+                model.setId(ticket.getId());
+
+
+        // elastic kaydet
+        elasticSearchRepository.save(model);
+
+        ResponseEntity<AccountDto> accountRes =  accountClient.get(UUID.fromString(ticketDto.getAssigned()));
+
 
         ticket.setAssigned(Objects.requireNonNull(accountRes.getBody()).getId());
 
         ticketNotificationService.sendToQueue(ticket);
-        Ticket savedTicket = ticketRepository.save(ticket);
+
 
 
         return ticketMapper.toDto(savedTicket);

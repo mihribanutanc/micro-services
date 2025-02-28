@@ -2,12 +2,14 @@ package com.reversetech.ticketservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 import java.util.UUID;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tickets")
 @Data
