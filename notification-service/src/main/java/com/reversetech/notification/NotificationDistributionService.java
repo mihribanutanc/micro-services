@@ -1,22 +1,32 @@
 package com.reversetech.notification;
 
-
 import com.reversetech.messaging.TicketNotification;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Service;
 
-import java.util.function.Consumer;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
-
-@Configuration
+@Service
 public class NotificationDistributionService {
 
-    @Bean
-    public Consumer<TicketNotification> onNotification() {
-        return ticketNotification -> {
-            System.out.println("———————————————————————————————————————————");
-            System.out.println("Notification Alindi Kullanicilara gönderiliyor.");
-            System.out.println("Notification -> " + ticketNotification.toString());
-        };
+    @RabbitListener(queues = "msqueue")
+    public void receiveMessage(byte[] message) {
+        try {
+            TicketNotification ticketNotification = deserializeMessage(message);
+            System.out.println("Gelen mesaj: " + ticketNotification);
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Mesaj deserialization işlemi sırasında bir hata oluştu: " + e.getMessage());
+        }
+    }
+
+
+    private TicketNotification deserializeMessage(byte[] message) throws IOException, ClassNotFoundException {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(message);
+             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+
+            return (TicketNotification) objectInputStream.readObject();
+        }
     }
 }
