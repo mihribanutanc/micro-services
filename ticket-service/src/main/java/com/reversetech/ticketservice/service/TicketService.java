@@ -71,12 +71,12 @@ public class TicketService {
         // elastic kaydet
         elasticSearchRepository.save(model);
 
-        ResponseEntity<AccountDto> accountRes =  accountClient.get(UUID.fromString(ticketDto.getAssigned()));
+        //ResponseEntity<AccountDto> accountRes =  accountClient.get(UUID.fromString(ticketDto.getAssigned()));
 
 
-        ticket.setAssigned(Objects.requireNonNull(accountRes.getBody()).getId());
+       // ticket.setAssigned(Objects.requireNonNull(accountRes.getBody()).getId());
 
-        ticketNotificationService.sendToQueue(ticket);
+        ticketNotificationService.sendMessage(ticket);
 
 
 

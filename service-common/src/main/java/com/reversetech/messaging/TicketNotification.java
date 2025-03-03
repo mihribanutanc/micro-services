@@ -1,14 +1,13 @@
 package com.reversetech.messaging;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+
+import java.io.Serializable;
 
 
 @ToString
-public class TicketNotification {
+public class TicketNotification implements Serializable {
     private String ticketId;
 
     public TicketNotification() {
@@ -45,6 +44,5 @@ public class TicketNotification {
         this.ticketDescription = ticketDescription;
         this.accountId = accountId;
     }
-
     private String ticketDescription;
 }
