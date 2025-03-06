@@ -33,7 +33,7 @@ services:
       - app-network
 
   zipkin:
-    image: openzipkin/zipkin
+    image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
     container_name: zipkin
     ports:
       - "9411:9411"

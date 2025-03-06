@@ -1,15 +1,14 @@
-package com.reversetech.dto;
+package com.reversetech.account_service.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class AccountDto {
+public class SaveAccountDto {
+
+    private UUID id;
 
     private String username;
 
