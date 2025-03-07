@@ -1,13 +1,13 @@
-package com.reversetech.messaging;
+package com.reversetech.notification.dto;
+
 
 import lombok.Data;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.UUID;
 
+
 @Data
-@ToString
 public class TicketNotification implements Serializable {
 
     private UUID ticketId;
@@ -15,5 +15,4 @@ public class TicketNotification implements Serializable {
     private String accountId;
 
     private String ticketDescription;
-
 }

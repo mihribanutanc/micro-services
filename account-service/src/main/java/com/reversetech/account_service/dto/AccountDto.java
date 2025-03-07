@@ -1,4 +1,4 @@
-package com.reversetech.dto;
+package com.reversetech.account_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

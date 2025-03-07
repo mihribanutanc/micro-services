@@ -1,9 +1,9 @@
 package com.reversetech.account_service.controller;
 
 import com.reversetech.account_service.api.AccountApi;
+import com.reversetech.account_service.dto.AccountDto;
 import com.reversetech.account_service.dto.SaveAccountDto;
 import com.reversetech.account_service.service.AccountService;
-import com.reversetech.dto.AccountDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
