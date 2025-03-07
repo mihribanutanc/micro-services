@@ -1,7 +1,7 @@
 package com.reversetech.account_service.api;
 
 import com.reversetech.account_service.dto.SaveAccountDto;
-import com.reversetech.dto.AccountDto;
+import com.reversetech.account_service.dto.AccountDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,7 +62,7 @@ public interface AccountApi {
             @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = @Content(schema = @Schema(implementation = AccountDto.class))),
             @ApiResponse(responseCode = "409", description = "Conflict", content = @Content(schema = @Schema(implementation = AccountDto.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = AccountDto.class)))})
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AccountDto> update(@PathVariable("id") UUID id, @RequestBody AccountDto accountDto);
 
     @Operation(operationId = "deleteAccount", summary = "Delete account by id")

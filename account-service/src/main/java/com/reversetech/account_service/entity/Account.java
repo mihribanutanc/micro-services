@@ -18,6 +18,7 @@ import java.util.UUID;
 @Table(value = "accounts")
 public class Account implements Serializable {
 
+
     @Id
     private UUID id = UUID.randomUUID();
 

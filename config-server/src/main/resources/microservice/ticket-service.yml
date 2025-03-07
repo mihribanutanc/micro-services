@@ -51,4 +51,4 @@ eureka:
 management:
   tracing:
     sampling:
-      probability: 1.0  # Tüm istekleri Zipkin'e logla (Production'da 0.1 gibi olabilir)
+      probability: 1.0

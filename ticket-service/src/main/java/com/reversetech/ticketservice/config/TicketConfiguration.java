@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories("com.reversetech")
 @EnableElasticsearchRepositories
-@ComponentScan("com.reversetech")
+@ComponentScan("com.reversetech.ticketservice")
 public class TicketConfiguration {
 
 }

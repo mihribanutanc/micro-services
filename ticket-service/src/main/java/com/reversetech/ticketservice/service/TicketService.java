@@ -1,18 +1,15 @@
 package com.reversetech.ticketservice.service;
 
-
-import com.reversetech.client.AccountServiceClient;
-import com.reversetech.dto.AccountDto;
+import com.reversetech.ticketservice.client.AccountService;
+import com.reversetech.ticketservice.dto.AccountDto;
 import com.reversetech.ticketservice.dto.TicketDto;
 import com.reversetech.ticketservice.mapper.TicketMapper;
 import com.reversetech.ticketservice.model.Ticket;
 import com.reversetech.ticketservice.model.es.TicketModel;
 import com.reversetech.ticketservice.repository.TicketRepository;
 import com.reversetech.ticketservice.repository.es.TicketElasticSearchRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,81 +21,80 @@ import java.util.UUID;
 
 
 @Service
+@RequiredArgsConstructor
 public class TicketService {
 
-    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper, AccountServiceClient accountClient,
-                         TicketNotificationService ticketNotificationService, TicketElasticSearchRepository elasticSearchRepository) {
-        this.ticketRepository = ticketRepository;
-        this.ticketMapper = ticketMapper;
-        this.accountClient = accountClient;
-        this.ticketNotificationService = ticketNotificationService;
-        this.elasticSearchRepository = elasticSearchRepository;
-    }
 
-    public TicketService() {
-    }
+    private final TicketRepository ticketRepository;
 
-    @Autowired
-    private  TicketRepository ticketRepository;
+    private final TicketElasticSearchRepository elasticSearchRepository;
 
-    @Autowired
-    private TicketElasticSearchRepository elasticSearchRepository;
+    private final TicketMapper ticketMapper;
 
-    @Autowired
-    private  TicketMapper ticketMapper;
+    private final AccountService accountClient;
+
+    private final TicketNotificationService ticketNotificationService;
 
 
-    private AccountServiceClient accountClient;
-
-    @Autowired
-    private  TicketNotificationService ticketNotificationService;
-
-
-
-
-    public TicketDto save(TicketDto ticketDto){
+    public TicketDto save(TicketDto ticketDto) {
 
         Ticket ticket = ticketMapper.toEntity(ticketDto);
+
+        ResponseEntity<AccountDto> accountRes =  accountClient.get(UUID.fromString(ticketDto.getAssigned()));
+
+        if (ObjectUtils.isEmpty(accountRes)) return null;
+
+        ticket.setAssigned(Objects.requireNonNull(accountRes.getBody()).getName());
+
         Ticket savedTicket = ticketRepository.save(ticket);
 
         TicketModel model = new TicketModel();
+        model.setId(savedTicket.getId());
+        model.setDescription(savedTicket.getDescription());
+        model.setNotes(savedTicket.getNotes());
 
-                model.setDescription(ticket.getDescription());
-                model.setNotes(ticket.getNotes());
-                model.setId(ticket.getId());
-
-
-        // elastic kaydet
         elasticSearchRepository.save(model);
 
-        //ResponseEntity<AccountDto> accountRes =  accountClient.get(UUID.fromString(ticketDto.getAssigned()));
-
-
-       // ticket.setAssigned(Objects.requireNonNull(accountRes.getBody()).getId());
-
-        ticketNotificationService.sendMessage(ticket);
-
-
+        ticketNotificationService.sendMessage(savedTicket);
 
         return ticketMapper.toDto(savedTicket);
-    };
+    }
 
-    public TicketDto update(String id, TicketDto ticketDto){
+    public TicketDto update(UUID id, TicketDto ticketDto) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
-        return null;
-    };
+        ticket.setDescription(ticketDto.getDescription());
+        ticket.setNotes(ticketDto.getNotes());
 
-    public TicketDto getById(String ticketId){
-        return null;
-    };
+        Ticket updatedTicket = ticketRepository.save(ticket);
 
-    public List<TicketDto> getTickets(){
-        return null;
-    };
+        TicketModel model = new TicketModel();
+        model.setId(updatedTicket.getId());
+        model.setDescription(updatedTicket.getDescription());
+        model.setNotes(updatedTicket.getNotes());
+        elasticSearchRepository.save(model);
 
-    public  Page<TicketDto> getPagination(Pageable pageable){
-        return null;
-    };
+        return ticketMapper.toDto(updatedTicket);
+    }
 
+    public TicketDto getById(UUID ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        return ticketMapper.toDto(ticket);
+    }
 
+    public List<TicketDto> getTickets() {
+        List<Ticket> tickets = ticketRepository.findAll();
+        return tickets.stream().map(ticketMapper::toDto).toList();
+    }
+
+    public Page<TicketDto> getPagination(Pageable pageable) {
+        Page<Ticket> ticketPage = ticketRepository.findAll(pageable);
+        return ticketPage.map(ticketMapper::toDto);
+    }
+
+    public void delete(UUID id) {
+        ticketRepository.deleteById(id);
+    }
 }

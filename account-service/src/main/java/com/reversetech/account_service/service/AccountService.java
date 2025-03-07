@@ -5,7 +5,7 @@ import com.reversetech.account_service.dto.SaveAccountDto;
 import com.reversetech.account_service.entity.Account;
 import com.reversetech.account_service.mapper.AccountMapper;
 import com.reversetech.account_service.repo.AccountRepository;
-import com.reversetech.dto.AccountDto;
+import com.reversetech.account_service.dto.AccountDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
